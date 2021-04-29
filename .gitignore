@@ -1,5 +1,15 @@
-
 .idea/
 example/.dart_tool/
 example/android/.gradle/
 example/build/
+.dart_tool/
+.dart_tool/version
+.idea/webview_flutter_upload.iml
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/.packages
+example/pubspec.lock
+.idea/webview_flutter_upload.iml
+example/pubspec.lock
+.idea/webview_flutter_upload.iml
+example/pubspec.lock
