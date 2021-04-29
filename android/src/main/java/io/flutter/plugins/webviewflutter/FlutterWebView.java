@@ -4,11 +4,15 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Build;
@@ -17,24 +21,36 @@ import android.provider.MediaStore;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Size;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.platform.PlatformView;
+import util.FileUtil;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class FlutterWebView implements PlatformView, MethodCallHandler {
+public class FlutterWebView implements PlatformView, MethodCallHandler{
   private static final String TAG = "FlutterWebView";
 
   private static final String JS_CHANNEL_NAMES_FIELD = "javascriptChannelNames";
@@ -43,12 +59,14 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
   private final FlutterWebViewClient flutterWebViewClient;
   private final Handler platformThreadHandler;
 
-  private Activity activity;
-  private Context context;
   private ValueCallback<Uri> uploadMessage;
   private ValueCallback<Uri[]> uploadMessageAboveL;
   private final static int FILE_CHOOSER_RESULT_CODE = 10000;
   public static final int RESULT_OK = -1;
+
+  private String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+  private static final int REQUEST_CAMERA = 1;
+  private Uri cameraUri;
 
   // Verifies that a url opened by `Window.open` has a secure url.
   private class FlutterWebChromeClient extends WebChromeClient {
@@ -97,22 +115,25 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     // For Android < 3.0
     public void openFileChooser(ValueCallback<Uri> valueCallback) {
       Log.v(TAG, "openFileChooser Android < 3.0");
+      if(uploadMessage!=null){
+        uploadMessage.onReceiveValue(null);
+      }
       uploadMessage = valueCallback;
-      openImageChooserActivity();
+      takePhotoOrOpenGallery();
     }
 
     // For Android  >= 3.0
     public void openFileChooser(ValueCallback valueCallback, String acceptType) {
       Log.v(TAG, "openFileChooser Android  >= 3.0");
       uploadMessage = valueCallback;
-      openImageChooserActivity();
+      takePhotoOrOpenGallery();
     }
 
     //For Android  >= 4.1
     public void openFileChooser(ValueCallback<Uri> valueCallback, String acceptType, String capture) {
       Log.v(TAG, "openFileChooser Android  >= 4.1");
       uploadMessage = valueCallback;
-      openImageChooserActivity();
+      takePhotoOrOpenGallery();
     }
 
     // For Android >= 5.0
@@ -120,7 +141,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
       Log.v(TAG, "openFileChooser Android >= 5.0");
       uploadMessageAboveL = filePathCallback;
-      openImageChooserActivity();
+      takePhotoOrOpenGallery();
       return true;
     }
   }
@@ -508,30 +529,163 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     }
   }
 
-  public boolean activityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == FILE_CHOOSER_RESULT_CODE) {
-      if (null == uploadMessage && null == uploadMessageAboveL) {
+  private void takePhotoOrOpenGallery() {
+    if (WebViewFlutterPlugin.activity==null||!FileUtil.checkSDcard(WebViewFlutterPlugin.activity)) {
+      return;
+    }
+    String[] selectPicTypeStr = {"拍照", "图库"};
+    new AlertDialog.Builder(WebViewFlutterPlugin.activity)
+            .setOnCancelListener(new ReOnCancelListener())
+            .setItems(selectPicTypeStr,
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                          // 相机拍摄
+                          case 0:
+                            openCamera();
+                            break;
+                          // 手机相册
+                          case 1:
+                            openImageChooserActivity();
+                            break;
+                          default:
+                            break;
+                        }
+                      }
+                    }).show();
+  }
+
+  /**
+   * Check if the calling context has a set of permissions.
+   *
+   * @param context the calling context.
+   * @param perms   one ore more permissions, such as {@link Manifest.permission#CAMERA}.
+   * @return true if all permissions are already granted, false if at least one permission is not
+   * yet granted.
+   * @see Manifest.permission
+   */
+  public static boolean hasPermissions(@NonNull Context context,
+                                       @Size(min = 1) @NonNull String... perms) {
+    // Always return true for SDK < M, let the system deal with the permissions
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      Log.w(TAG, "hasPermissions: API version < M, returning true by default");
+
+      // DANGER ZONE!!! Changing this will break the library.
+      return true;
+    }
+
+    // Null context may be passed if we have detected Low API (less than M) so getting
+    // to this point with a null context should not be possible.
+    if (context == null) {
+      throw new IllegalArgumentException("Can't check permissions for null context");
+    }
+
+    for (String perm : perms) {
+      if (ContextCompat.checkSelfPermission(context, perm)
+              != PackageManager.PERMISSION_GRANTED) {
         return false;
       }
-      Uri result = data == null || resultCode != RESULT_OK ? null : data.getData();
-      if (uploadMessageAboveL != null) {
-        onActivityResultAboveL(requestCode, resultCode, data);
-      } else if (uploadMessage != null && result != null) {
-        uploadMessage.onReceiveValue(result);
+    }
+
+    return true;
+  }
+
+  /**
+   * 打开照相机
+   */
+  private void openCamera() {
+    if (hasPermissions(WebViewFlutterPlugin.activity, perms)) {
+      try {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // 给目标应用一个临时授权
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        cameraUri = FileProvider.getUriForFile(WebViewFlutterPlugin.activity, WebViewFlutterPlugin.activity.getPackageName() + ".fileprovider", FileUtil.createImageFile());
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+        WebViewFlutterPlugin.activity.startActivityForResult(intent, REQUEST_CAMERA);
+      }catch (Exception e) {
+        Toast.makeText(WebViewFlutterPlugin.activity,e.getMessage(),Toast.LENGTH_SHORT).show();
+        if (uploadMessageAboveL != null) {
+          uploadMessageAboveL.onReceiveValue(null);
+          uploadMessageAboveL=null;
+        }
+      }
+    } else {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        ActivityCompat.requestPermissions(WebViewFlutterPlugin.activity,perms, REQUEST_CAMERA);
+      }
+    }
+  }
+
+  /**
+   * dialog监听类
+   */
+  private class ReOnCancelListener implements DialogInterface.OnCancelListener {
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+      if (uploadMessage != null) {
+        uploadMessage.onReceiveValue(null);
         uploadMessage = null;
       }
+
+      if (uploadMessageAboveL != null) {
+        uploadMessageAboveL.onReceiveValue(null);
+        uploadMessageAboveL = null;
+      }
+    }
+  }
+
+  public boolean requestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (requestCode == REQUEST_CAMERA) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        openCamera();
+      } else {
+        Toast.makeText(WebViewFlutterPlugin.activity, "拍照需要您授予相机权限", Toast.LENGTH_SHORT).show();
+        if (uploadMessage != null) {
+          uploadMessage.onReceiveValue(null);
+          uploadMessage = null;
+        }
+        if (uploadMessageAboveL != null) {
+          uploadMessageAboveL.onReceiveValue(null);
+          uploadMessageAboveL = null;
+        }
+      }
+    }
+    return false;
+  }
+
+  public boolean activityResult(int requestCode, int resultCode, Intent data) {
+    Log.v(TAG, "activityResult: " );
+    if (null == uploadMessage && null == uploadMessageAboveL) {
+      return false;
+    }
+    Uri result = null;
+    if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+      result = cameraUri;
+    }
+    if (requestCode == FILE_CHOOSER_RESULT_CODE) {
+      result = data == null || resultCode != RESULT_OK ? null : data.getData();
+    }
+    if (uploadMessageAboveL != null) {
+      onActivityResultAboveL(requestCode, resultCode, data);
+    } else if (uploadMessage != null && result != null) {
+      uploadMessage.onReceiveValue(result);
+      uploadMessage = null;
     }
     return false;
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private void onActivityResultAboveL(int requestCode, int resultCode, Intent intent) {
-    if (requestCode != FILE_CHOOSER_RESULT_CODE || uploadMessageAboveL == null)
-    {
+    if (requestCode != FILE_CHOOSER_RESULT_CODE && requestCode != REQUEST_CAMERA || uploadMessageAboveL == null) {
       return;
     }
     Uri[] results = null;
-    if (resultCode == Activity.RESULT_OK) {
+    if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+      results = new Uri[]{cameraUri};
+    }
+
+    if (requestCode == FILE_CHOOSER_RESULT_CODE && resultCode == Activity.RESULT_OK) {
       if (intent != null) {
         String dataString = intent.getDataString();
         ClipData clipData = intent.getClipData();
@@ -542,8 +696,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
             results[i] = item.getUri();
           }
         }
-        if (dataString != null)
-        {
+        if (dataString != null) {
           results = new Uri[]{Uri.parse(dataString)};
         }
       }

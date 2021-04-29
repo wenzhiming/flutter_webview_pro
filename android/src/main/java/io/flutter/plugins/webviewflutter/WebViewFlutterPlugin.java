@@ -25,7 +25,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * <p>Call {@link #registerWith(Registrar)} to use the stable {@code io.flutter.plugin.common}
  * package instead.
  */
-public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.ActivityResultListener, ActivityAware{
+public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.ActivityResultListener,PluginRegistry.RequestPermissionsResultListener, ActivityAware{
   private static final String TAG = "WebViewFlutterPlugin";
   private FlutterCookieManager flutterCookieManager;
   public static Activity activity;
@@ -50,7 +50,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.Acti
    * package.
    *
    * <p>Calling this automatically initializes the plugin. However plugins initialized this way
-   * won't react to changes in activity or context, unlike {@link CameraPlugin}.
+   * won't react to changes in activity or context, unlike {CameraPlugin}.
    */
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -60,7 +60,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.Acti
             "plugins.flutter.io/webview",
             new WebViewFactory(registrar.messenger(), registrar.view()));
     new FlutterCookieManager(registrar.messenger());
-  }
+    }
 
   @Override
   public void onAttachedToEngine(FlutterPluginBinding binding) {
@@ -106,6 +106,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.Acti
     Log.v(TAG,"onAttachedToActivity");
     activity = binding.getActivity();
     binding.addActivityResultListener(this);
+    binding.addRequestPermissionsResultListener(this);
   }
 
   @Override
@@ -121,5 +122,15 @@ public class WebViewFlutterPlugin implements FlutterPlugin , PluginRegistry.Acti
   @Override
   public void onDetachedFromActivity() {
     Log.v(TAG,"onDetachedFromActivity");
+  }
+
+  @Override
+  public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    Log.v(TAG,"onRequestPermissionsResult");
+    if (factory != null && factory.getFlutterWebView() != null){
+      return factory.getFlutterWebView().requestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    return false;
   }
 }
