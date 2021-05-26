@@ -4,12 +4,12 @@ example/android/.gradle/
 example/build/
 .dart_tool/
 .dart_tool/version
-.idea/webview_flutter_upload.iml
+.idea/flutter_webview_pro.iml
 example/.flutter-plugins
 example/.flutter-plugins-dependencies
 example/.packages
 example/pubspec.lock
-.idea/webview_flutter_upload.iml
+.idea/flutter_webview_pro.iml
 example/pubspec.lock
-.idea/webview_flutter_upload.iml
+.idea/flutter_webview_pro.iml
 example/pubspec.lock

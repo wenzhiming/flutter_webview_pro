@@ -14,8 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:webview_flutter_upload/platform_interface.dart';
-import 'package:webview_flutter_upload/webview_flutter.dart';
+import 'package:flutter_webview_pro/platform_interface.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

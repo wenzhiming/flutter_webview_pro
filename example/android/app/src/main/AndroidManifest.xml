@@ -8,7 +8,7 @@
        FlutterApplication and put your custom class here. -->
   <application
     android:icon="@mipmap/ic_launcher"
-    android:label="webview_flutter_upload"
+    android:label="flutter_webview_pro"
     android:name="io.flutter.app.FlutterApplication">
     <meta-data
         android:name="flutterEmbedding"

@@ -1,1 +1,3 @@
-rootProject.name = 'webview_flutter_upload'
+package android
+
+rootProject.name = 'flutter_webview_pro'

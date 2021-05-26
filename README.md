@@ -1,6 +1,6 @@
 # WebView Flutter Upload
 
-[![pub package](https://img.shields.io/badge/pub-v0.2.0-orange)](https://pub.dartlang.org/packages/webview_flutter_upload)
+[![pub package](https://img.shields.io/badge/pub-v0.2.0-orange)](https://pub.dartlang.org/packages/flutter_webview_pro)
 
 A Flutter plugin that provides a WebView widget   who Support photo upload and take camera.
 The official flutter plugin `webview_flutter` Android does not support H5 file upload, that is, it does not support the H5 code below.
@@ -18,14 +18,14 @@ Run this command:
 
 With Flutter:
 ```dart
- $ flutter pub add webview_flutter_upload
+ $ flutter pub add flutter_webview_pro
  ```
 
 This will add a line like this to your package's pubspec.yaml (and run an implicit dart pub get):
 
 ```dart
 dependencies:
-  webview_flutter_upload: ^0.2.0
+  flutter_webview_pro: ^0.2.0
   ```
 
 Alternatively, your editor might support flutter pub get. Check the docs for your editor to learn more.
@@ -34,7 +34,7 @@ Import it
 Now in your Dart code, you can use:
 
 ```dart
-import 'package:webview_flutter_upload/platform_interface.dart';
-import 'package:webview_flutter_upload/webview_flutter.dart';
+import 'package:flutter_webview_pro/platform_interface.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart';
 ```
 

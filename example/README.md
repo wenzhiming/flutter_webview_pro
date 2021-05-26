@@ -1,6 +1,6 @@
 # webview_flutter_example
 
-Demonstrates how to use the webview_flutter plugin.
+Demonstrates how to use the flutter_webview_pro plugin.
 
 ## Getting Started
 
