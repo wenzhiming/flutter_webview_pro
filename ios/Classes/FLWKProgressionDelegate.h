@@ -3,11 +3,16 @@
 // found in the LICENSE file.
 
 #import <Flutter/Flutter.h>
+#import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FLTCookieManager : NSObject <FlutterPlugin>
+@interface FLWKProgressionDelegate : NSObject
+
+- (instancetype)initWithWebView:(WKWebView *)webView channel:(FlutterMethodChannel *)channel;
+
+- (void)stopObservingProgress:(WKWebView *)webView;
 
 @end
 

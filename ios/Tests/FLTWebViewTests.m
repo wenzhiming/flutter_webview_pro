@@ -24,25 +24,25 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   self.mockBinaryMessenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
 }
 
-- (void)testCanInitFLTWebViewController {
-  FLTWebViewController *controller =
-      [[FLTWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
+- (void)testCanInitFLWebViewController {
+  FLWebViewController *controller =
+      [[FLWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
                                    viewIdentifier:1
                                         arguments:nil
                                   binaryMessenger:self.mockBinaryMessenger];
   XCTAssertNotNil(controller);
 }
 
-- (void)testCanInitFLTWebViewFactory {
-  FLTWebViewFactory *factory =
-      [[FLTWebViewFactory alloc] initWithMessenger:self.mockBinaryMessenger];
+- (void)testCanInitFLWebViewFactory {
+  FLWebViewFactory *factory =
+      [[FLWebViewFactory alloc] initWithMessenger:self.mockBinaryMessenger];
   XCTAssertNotNil(factory);
 }
 
 - (void)webViewContentInsetBehaviorShouldBeNeverOnIOS11 {
   if (@available(iOS 11, *)) {
-    FLTWebViewController *controller =
-        [[FLTWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
+    FLWebViewController *controller =
+        [[FLWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
                                      viewIdentifier:1
                                           arguments:nil
                                     binaryMessenger:self.mockBinaryMessenger];
@@ -56,8 +56,8 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
 
 - (void)testWebViewScrollIndicatorAticautomaticallyAdjustsScrollIndicatorInsetsShouldbeNoOnIOS13 {
   if (@available(iOS 13, *)) {
-    FLTWebViewController *controller =
-        [[FLTWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
+    FLWebViewController *controller =
+        [[FLWebViewController alloc] initWithFrame:CGRectMake(0, 0, 300, 400)
                                      viewIdentifier:1
                                           arguments:nil
                                     binaryMessenger:self.mockBinaryMessenger];
@@ -69,7 +69,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
 }
 
 - (void)testContentInsetsSumAlwaysZeroAfterSetFrame {
-  FLTWKWebView *webView = [[FLTWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+  FLWKWebView *webView = [[FLWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
   webView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 300, 0);
   XCTAssertFalse(UIEdgeInsetsEqualToEdgeInsets(webView.scrollView.contentInset, UIEdgeInsetsZero));
   webView.frame = CGRectMake(0, 0, 300, 200);

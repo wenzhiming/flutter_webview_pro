@@ -4,8 +4,8 @@
 
 #import "GeneratedPluginRegistrant.h"
 
-#if __has_include(<flutter_webview_pro/FLTWebViewFlutterPlugin.h>)
-#import <flutter_webview_pro/FLTWebViewFlutterPlugin.h>
+#if __has_include(<flutter_webview_pro/FLWebViewFlutterPlugin.h>)
+#import <flutter_webview_pro/FLWebViewFlutterPlugin.h>
 #else
 @import flutter_webview_pro;
 #endif
@@ -19,7 +19,7 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
-  [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
+  [FLWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLWebViewFlutterPlugin"]];
   [IntegrationTestPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntegrationTestPlugin"]];
 }
 

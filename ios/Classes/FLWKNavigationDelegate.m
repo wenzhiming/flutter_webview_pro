@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTWKNavigationDelegate.h"
+#import "FLWKNavigationDelegate.h"
 
-@implementation FLTWKNavigationDelegate {
+@implementation FLWKNavigationDelegate {
   FlutterMethodChannel *_methodChannel;
 }
 
@@ -89,7 +89,7 @@
                        @"errorCode" : @(error.code),
                        @"domain" : error.domain,
                        @"description" : error.description,
-                       @"errorType" : [FLTWKNavigationDelegate errorCodeToString:error.code],
+                       @"errorType" : [FLWKNavigationDelegate errorCodeToString:error.code],
                      }];
 }
 

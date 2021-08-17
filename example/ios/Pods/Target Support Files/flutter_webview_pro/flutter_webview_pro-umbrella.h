@@ -10,11 +10,11 @@
 #endif
 #endif
 
-#import "FLTCookieManager.h"
-#import "FLTWebViewFlutterPlugin.h"
-#import "FLTWKNavigationDelegate.h"
-#import "FLTWKProgressionDelegate.h"
+#import "FLCookieManager.h"
+#import "FLWKNavigationDelegate.h"
+#import "FLWKProgressionDelegate.h"
 #import "FlutterWebView.h"
+#import "FLWebViewFlutterPlugin.h"
 #import "JavaScriptChannelHandler.h"
 
 FOUNDATION_EXPORT double flutter_webview_proVersionNumber;
