@@ -11,7 +11,7 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FLWebViewFactory* mywebviewFactory =
       [[FLWebViewFactory alloc] initWithMessenger:registrar.messenger];
-  [registrar registerViewFactory:mywebviewFactory withId:@"plugins.flutter.io/mywebview"];
+  [registrar registerViewFactory:mywebviewFactory withId:@"plugins.flutter.io/webview"];
   [FLCookieManager registerWithRegistrar:registrar];
 }
 
