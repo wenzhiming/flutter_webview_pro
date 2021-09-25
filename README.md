@@ -1,4 +1,4 @@
-# WebView Flutter Pro
+# Flutter WebView Pro
 
 [![pub package](https://img.shields.io/badge/pub-v0.7.0-orange)](https://pub.dartlang.org/packages/flutter_webview_pro)
 
