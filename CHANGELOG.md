@@ -1,3 +1,6 @@
+## 0.7.0
+- fix the language in english when prompting file chooser（Issues#1）
+
 ## 0.6.0
 - fix iOS bug:unregistered view type: 'plugins.flutter.io/webview'
 
