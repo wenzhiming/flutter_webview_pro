@@ -396,6 +396,7 @@ class WebSettings {
     this.debuggingEnabled,
     this.gestureNavigationEnabled,
     this.allowsInlineMediaPlayback,
+    this.geolocationEnabled,
     required this.userAgent,
   }) : assert(userAgent != null);
 
@@ -433,6 +434,9 @@ class WebSettings {
   ///
   /// See also: [WebView.gestureNavigationEnabled]
   final bool? gestureNavigationEnabled;
+
+  /// See also: [WebView.geolocationEnabled]
+  final bool? geolocationEnabled;
 
   @override
   String toString() {

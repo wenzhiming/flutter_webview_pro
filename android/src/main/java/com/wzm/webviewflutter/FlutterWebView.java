@@ -1,4 +1,3 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,11 +16,11 @@ import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.webkit.PermissionRequest;
+import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -29,26 +28,25 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import android.webkit.JsPromptResult;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Size;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.platform.PlatformView;
 import util.FileUtil;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import android.content.pm.PackageManager;
 
 public class FlutterWebView implements PlatformView, MethodCallHandler{
   private static final String TAG = "FlutterWebView";
@@ -66,36 +64,38 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
 
   private String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
   private static final int REQUEST_CAMERA = 1;
+  private static final int REQUEST_LOCATION = 100;
   private Uri cameraUri;
 
   // Verifies that a url opened by `Window.open` has a secure url.
   private class FlutterWebChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(
-        final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+            final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
       final WebViewClient webViewClient =
-          new WebViewClient() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public boolean shouldOverrideUrlLoading(
-                @NonNull WebView view, @NonNull WebResourceRequest request) {
-              final String url = request.getUrl().toString();
-              if (!flutterWebViewClient.shouldOverrideUrlLoading(
-                  FlutterWebView.this.webView, request)) {
-                webView.loadUrl(url);
-              }
-              return true;
-            }
+              new WebViewClient() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public boolean shouldOverrideUrlLoading(
+                        @NonNull WebView view, @NonNull WebResourceRequest request) {
+                  final String url = request.getUrl().toString();
+                  if (!flutterWebViewClient.shouldOverrideUrlLoading(
+                          FlutterWebView.this.webView, request)) {
+                    webView.loadUrl(url);
+                  }
+                  return true;
+                }
 
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-              if (!flutterWebViewClient.shouldOverrideUrlLoading(
-                  FlutterWebView.this.webView, url)) {
-                webView.loadUrl(url);
-              }
-              return true;
-            }
-          };
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                  if (!flutterWebViewClient.shouldOverrideUrlLoading(
+                          FlutterWebView.this.webView, url)) {
+                    webView.loadUrl(url);
+                  }
+                  return true;
+                }
+
+              };
 
       final WebView newWebView = new WebView(view.getContext());
       newWebView.setWebViewClient(webViewClient);
@@ -144,27 +144,33 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
       takePhotoOrOpenGallery();
       return true;
     }
+
+    @Override
+    public void onGeolocationPermissionsShowPrompt(final String origin, final GeolocationPermissions.Callback callback) {
+      callback.invoke(origin, true, false);
+      super.onGeolocationPermissionsShowPrompt(origin, callback);
+    }
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
   @SuppressWarnings("unchecked")
   FlutterWebView(
-      final Context context,
-      BinaryMessenger messenger,
-      int id,
-      Map<String, Object> params,
-      View containerView) {
+          final Context context,
+          BinaryMessenger messenger,
+          int id,
+          Map<String, Object> params,
+          View containerView) {
 
     DisplayListenerProxy displayListenerProxy = new DisplayListenerProxy();
     DisplayManager displayManager =
-        (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     displayListenerProxy.onPreWebViewInitialization(displayManager);
 
     Boolean usesHybridComposition = (Boolean) params.get("usesHybridComposition");
     webView =
-        (usesHybridComposition)
-            ? new WebView(context)
-            : new InputAwareWebView(context, containerView);
+            (usesHybridComposition)
+                    ? new WebView(context)
+                    : new InputAwareWebView(context, containerView);
 
     displayListenerProxy.onPostWebViewInitialization(displayManager);
 
@@ -369,13 +375,13 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
       throw new UnsupportedOperationException("JavaScript string cannot be null");
     }
     webView.evaluateJavascript(
-        jsString,
-        new android.webkit.ValueCallback<String>() {
-          @Override
-          public void onReceiveValue(String value) {
-            result.success(value);
-          }
-        });
+            jsString,
+            new android.webkit.ValueCallback<String>() {
+              @Override
+              public void onReceiveValue(String value) {
+                result.success(value);
+              }
+            });
   }
 
   @SuppressWarnings("unchecked")
@@ -442,7 +448,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
           final boolean hasNavigationDelegate = (boolean) settings.get(key);
 
           final WebViewClient webViewClient =
-              flutterWebViewClient.createWebViewClient(hasNavigationDelegate);
+                  flutterWebViewClient.createWebViewClient(hasNavigationDelegate);
 
           webView.setWebViewClient(webViewClient);
           break;
@@ -457,6 +463,18 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
           flutterWebViewClient.hasProgressTracking = (boolean) settings.get(key);
           break;
         case "gestureNavigationEnabled":
+          break;
+        case "geolocationEnabled":
+          final boolean geolocationEnabled = (boolean) settings.get(key);
+          webView.getSettings().setGeolocationEnabled(geolocationEnabled);
+          if (geolocationEnabled && Build.VERSION.SDK_INT >= 23) {
+            int checkPermission = ContextCompat.checkSelfPermission(WebViewFlutterPlugin.activity, Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (checkPermission != PackageManager.PERMISSION_GRANTED) {
+              ActivityCompat.requestPermissions(WebViewFlutterPlugin.activity,
+                      new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                      REQUEST_LOCATION);
+            }
+          }
           break;
         case "userAgent":
           updateUserAgent((String) settings.get(key));
@@ -495,7 +513,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
   private void registerJavaScriptChannelNames(List<String> channelNames) {
     for (String channelName : channelNames) {
       webView.addJavascriptInterface(
-          new JavaScriptChannel(methodChannel, channelName, platformThreadHandler), channelName);
+              new JavaScriptChannel(methodChannel, channelName, platformThreadHandler), channelName);
     }
   }
 
@@ -706,3 +724,4 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
     uploadMessageAboveL = null;
   }
 }
+

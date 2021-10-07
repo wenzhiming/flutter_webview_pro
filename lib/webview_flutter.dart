@@ -227,6 +227,7 @@ class WebView extends StatefulWidget {
     this.onWebResourceError,
     this.debuggingEnabled = false,
     this.gestureNavigationEnabled = false,
+    this.geolocationEnabled = false,
     this.userAgent,
     this.initialMediaPlaybackPolicy =
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
@@ -393,6 +394,12 @@ class WebView extends StatefulWidget {
   /// By default `gestureNavigationEnabled` is false.
   final bool gestureNavigationEnabled;
 
+  ///
+  /// This only works on Android.
+  ///
+  /// By default `geolocationEnabled` is false.
+  final bool geolocationEnabled;
+
   /// The value used for the HTTP User-Agent: request header.
   ///
   /// When null the platform's webview default is used for the User-Agent header.
@@ -490,7 +497,8 @@ WebSettings _webSettingsFromWidget(WebView widget) {
     debuggingEnabled: widget.debuggingEnabled,
     gestureNavigationEnabled: widget.gestureNavigationEnabled,
     allowsInlineMediaPlayback: widget.allowsInlineMediaPlayback,
-    userAgent: WebSetting<String?>.of(widget.userAgent),
+    geolocationEnabled: widget.geolocationEnabled,
+    userAgent: WebSetting<String?>.of(widget.userAgent)
   );
 }
 

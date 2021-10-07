@@ -84,6 +84,7 @@ class _WebViewExampleState extends State<WebViewExample> {
             print('Page finished loading: $url');
           },
           gestureNavigationEnabled: true,
+          geolocationEnabled: true,
         );
       }),
     );
@@ -109,6 +110,7 @@ enum MenuOptions {
   listCache,
   clearCache,
   navigationDelegate,
+  geolocation
 }
 
 class SampleMenu extends StatelessWidget {
@@ -147,6 +149,9 @@ class SampleMenu extends StatelessWidget {
               case MenuOptions.navigationDelegate:
                 _onNavigationDelegateExample(controller.data!, context);
                 break;
+              case MenuOptions.geolocation:
+                _toLocationExample(controller.data!, context);
+                break;
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -178,6 +183,10 @@ class SampleMenu extends StatelessWidget {
             const PopupMenuItem<MenuOptions>(
               value: MenuOptions.navigationDelegate,
               child: Text('Navigation Delegate example'),
+            ),
+            const PopupMenuItem<MenuOptions>(
+              value: MenuOptions.geolocation,
+              child: Text('Navigation Geolocation example'),
             ),
           ],
         );
@@ -250,6 +259,11 @@ class SampleMenu extends StatelessWidget {
     final String contentBase64 =
         base64Encode(const Utf8Encoder().convert(kNavigationExamplePage));
     await controller.loadUrl('data:text/html;base64,$contentBase64');
+  }
+
+  void _toLocationExample(
+      WebViewController controller, BuildContext context) async {
+    await controller.loadUrl('https://amap.com/dir');
   }
 
   Widget _getCookieList(String cookies) {

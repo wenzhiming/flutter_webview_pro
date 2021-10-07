@@ -1,3 +1,6 @@
+## 1.0.0
+- support Geolocation（Issues#3 #4 #5）
+
 ## 0.7.0
 - fix the language in english when prompting file chooser（Issues#1）
 

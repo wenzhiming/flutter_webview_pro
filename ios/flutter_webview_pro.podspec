@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'flutter_webview_pro'
-  s.version          = '0.0.3'
+  s.version          = '1.0.0'
   s.summary          = 'A WebView Plugin for Flutter.'
   s.description      = <<-DESC
 A Flutter plugin that provides a WebView widget.
@@ -11,7 +11,7 @@ Downloaded by pub (not CocoaPods).
                        DESC
   s.homepage         = 'https://github.com/'
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
-  s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
+  s.author           = { 'wenzhiming' => '313902419@qq.com' }
   s.source           = { :http => 'https://github.com/' }
   s.documentation_url = 'https://pub.dev/packages/flutter_webview_pro'
   s.source_files = 'Classes/**/*'

@@ -1,6 +1,6 @@
 {
   "name": "flutter_webview_pro",
-  "version": "0.0.3",
+  "version": "0.7.0",
   "summary": "A WebView Plugin for Flutter.",
   "description": "A Flutter plugin that provides a WebView widget.\nDownloaded by pub (not CocoaPods).",
   "homepage": "https://github.com/",
@@ -9,7 +9,7 @@
     "file": "../LICENSE"
   },
   "authors": {
-    "Flutter Dev Team": "flutter-dev@googlegroups.com"
+    "wenzhiming": "313902419@qq.com"
   },
   "source": {
     "http": "https://github.com/"
