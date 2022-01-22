@@ -1,7 +1,7 @@
 name: flutter_webview_pro  #插件的名称，改动的时候需要注意，可能会引起插件中的引用改动，导致其他问题。
 description: A Flutter plugin that provides a WebView widget on Android and iOS. # 插件描述
 homepage: https://github.com/wenzhiming/flutter_webview_pro.git  #项目的git地址
-version: 1.0.0 #当前插件版本，每一次发布都不能和以前版本号一样
+version: 1.0.1 #当前插件版本，每一次发布都不能和以前版本号一样
 #author: wenzhiming<313902419@qq.com> # 作者信息，会显示到 https://pub.flutter-io.cn 中
 
 environment:
