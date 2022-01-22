@@ -3,12 +3,11 @@ package util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import androidx.core.content.FileProvider;
+import androidx.core.content.ContextCompat;
 
 
 import java.io.File;
@@ -231,57 +230,14 @@ public class FileUtil {
 
 
     //创建一个文件存放拍照的图片
-    public static File createImageFile() throws IOException {
+    //放在应用关联缓存目录下，不需要申请运行时权限
+    public static File createImageFile(Context ctx) throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-        File albumF = getAlbumDir();
-        File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
-        return imageF;
+        return File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, ctx.getExternalCacheDir());
     }
 
-    //创建一个文件存放视频
-    public static File createVideoFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = VIDEO_FILE_PREFIX + timeStamp + "_";
-        File albumF = getAlbumDir();
-        File imageF = File.createTempFile(imageFileName, VIDEO_FILE_SUFFIX, albumF);
-        return imageF;
-    }
-
-    //初始化sd卡下存放拍照图片的文件夹
-    private static File getAlbumDir() {
-        File storageDir = null;
-
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-
-            storageDir = getAlbumStorageDir("camera");
-
-            if (storageDir != null) {
-                if (!storageDir.mkdirs()) {
-                    if (!storageDir.exists()) {
-                        Log.d("Camera", "failed to create directory");
-                        return null;
-                    }
-                }
-            }
-
-        } else {
-            Log.v("FileUtil", "External storage is not mounted READ/WRITE.");
-        }
-
-        return storageDir;
-    }
-
-    public static File getAlbumStorageDir(String albumName) {
-        return new File(
-                Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES
-                ),
-                albumName
-        );
-    }
 
     /**
      * 获取文件长度

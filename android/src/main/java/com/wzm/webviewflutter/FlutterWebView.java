@@ -30,6 +30,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 import android.webkit.JsPromptResult;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
   private final static int FILE_CHOOSER_RESULT_CODE = 10000;
   public static final int RESULT_OK = -1;
 
-  private String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+  private String[] perms = {Manifest.permission.CAMERA};
   private static final int REQUEST_CAMERA = 1;
   private static final int REQUEST_LOCATION = 100;
   private Uri cameraUri;
@@ -616,24 +617,34 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
   private void openCamera() {
     if (hasPermissions(WebViewFlutterPlugin.activity, perms)) {
       try {
+        //创建File对象，用于存储拍照后的照片
+        File outputImage = FileUtil.createImageFile(WebViewFlutterPlugin.activity);
+        if (outputImage.exists()) {
+          outputImage.delete();
+        }
+        outputImage.createNewFile();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          cameraUri = FileProvider.getUriForFile(WebViewFlutterPlugin.activity, WebViewFlutterPlugin.activity.getPackageName() + ".fileprovider", outputImage);
+        } else {
+          Uri.fromFile(outputImage);
+        }
+        //启动相机程序
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // 给目标应用一个临时授权
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        cameraUri = FileProvider.getUriForFile(WebViewFlutterPlugin.activity, WebViewFlutterPlugin.activity.getPackageName() + ".fileprovider", FileUtil.createImageFile());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
         WebViewFlutterPlugin.activity.startActivityForResult(intent, REQUEST_CAMERA);
-      }catch (Exception e) {
-        Toast.makeText(WebViewFlutterPlugin.activity,e.getMessage(),Toast.LENGTH_SHORT).show();
+      } catch (Exception e) {
+        Toast.makeText(WebViewFlutterPlugin.activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         if (uploadMessageAboveL != null) {
           uploadMessageAboveL.onReceiveValue(null);
-          uploadMessageAboveL=null;
+          uploadMessageAboveL = null;
         }
       }
     } else {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        ActivityCompat.requestPermissions(WebViewFlutterPlugin.activity,perms, REQUEST_CAMERA);
+        ActivityCompat.requestPermissions(WebViewFlutterPlugin.activity, perms, REQUEST_CAMERA);
       }
     }
+
   }
 
   /**
