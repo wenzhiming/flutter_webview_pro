@@ -534,13 +534,13 @@ public class FlutterWebView implements PlatformView, MethodCallHandler{
 
   private void openImageChooserActivity() {
     Log.v(TAG, "openImageChooserActivity");
-    Intent intent1 = new Intent(Intent.ACTION_PICK, null);
-    intent1.setDataAndType(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+    Intent intent1 = new Intent(Intent.ACTION_GET_CONTENT);
+    intent1.addCategory(Intent.CATEGORY_OPENABLE);
+    intent1.setType("*/*");
+
     Intent chooser = new Intent(Intent.ACTION_CHOOSER);
     chooser.putExtra(Intent.EXTRA_TITLE, WebViewFlutterPlugin.activity.getString(R.string.select_picture));
-    chooser.putExtra(Intent.EXTRA_INTENT,intent1);
-
+    chooser.putExtra(Intent.EXTRA_INTENT, intent1);
     if (WebViewFlutterPlugin.activity != null){
       WebViewFlutterPlugin.activity.startActivityForResult(chooser, FILE_CHOOSER_RESULT_CODE);
     } else {

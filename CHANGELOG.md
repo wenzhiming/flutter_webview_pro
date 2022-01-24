@@ -1,4 +1,7 @@
-## 1.0.0
+## 1.0.2
+- support select pdf|doc|xls files（Issues #6 ）
+
+## 1.0.1
 - fix take camera in android10（Issues #7 ）
 
 ## 1.0.0
