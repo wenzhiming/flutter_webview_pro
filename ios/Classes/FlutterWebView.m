@@ -4,7 +4,7 @@
 
 #import "FlutterWebView.h"
 #import "FLWKNavigationDelegate.h"
-#import "FLWKProgressionDelegate.h"
+#import "ProWKProgressionDelegate.h"
 #import "JavaScriptChannelHandler.h"
 
 @implementation FLWebViewFactory {
@@ -65,7 +65,7 @@
   // The set of registered JavaScript channel names.
   NSMutableSet* _javaScriptChannelNames;
   FLWKNavigationDelegate* _navigationDelegate;
-  FLWKProgressionDelegate* _progressionDelegate;
+  ProWKProgressionDelegate* _progressionDelegate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -336,7 +336,7 @@
       NSNumber* hasProgressTrackingValue = settings[key];
       bool hasProgressTracking = [hasProgressTrackingValue boolValue];
       if (hasProgressTracking) {
-        _progressionDelegate = [[FLWKProgressionDelegate alloc] initWithWebView:_webView
+        _progressionDelegate = [[ProWKProgressionDelegate alloc] initWithWebView:_webView
                                                                          channel:_channel];
       }
     } else if ([key isEqualToString:@"debuggingEnabled"]) {

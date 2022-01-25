@@ -1,0 +1,35 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_webview_pro (1.0.0):
+    - Flutter
+  - integration_test (0.0.1):
+    - Flutter
+  - OCMock (3.5)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_webview_pro (from `.symlinks/plugins/flutter_webview_pro/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - OCMock (= 3.5)
+
+SPEC REPOS:
+  trunk:
+    - OCMock
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_webview_pro:
+    :path: ".symlinks/plugins/flutter_webview_pro/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_webview_pro: 569314997078b3d00ae8fd6aaa791832efff1795
+  integration_test: 7db6d89f336f671dcbc7563ee27a5b08f6f8aee1
+  OCMock: 4ab4577fc941af31f4a0398f6e7e230cf21fc72a
+
+PODFILE CHECKSUM: b36feef8b3c1de558c5a548dd556cc98c8b0ca10
+
+COCOAPODS: 1.11.2

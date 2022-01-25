@@ -1,6 +1,6 @@
 # Flutter WebView Pro
 
-[![pub package](https://img.shields.io/badge/pub-v1.0.2-orange)](https://pub.dartlang.org/packages/flutter_webview_pro)
+[![pub package](https://img.shields.io/badge/pub-v1.0.3-orange)](https://pub.dartlang.org/packages/flutter_webview_pro)
 
 A Flutter plugin that provides a WebView widget   who Support photo upload/take camera and Geolocation.
 The official flutter plugin `webview_flutter` Android does not support H5 file upload, that is, it does not support the H5 code below.
@@ -18,7 +18,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_webview_pro: ^1.0.2
+  flutter_webview_pro: ^1.0.3
 ```
 
 ## Import

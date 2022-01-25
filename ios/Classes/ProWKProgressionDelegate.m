@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLWKProgressionDelegate.h"
+#import "ProWKProgressionDelegate.h"
 
-NSString *const FLTWKEstimatedProgressKeyPath = @"estimatedProgress";
+NSString *const ProWKEstimatedProgressKeyPath = @"estimatedProgress";
 
-@implementation FLWKProgressionDelegate {
+@implementation ProWKProgressionDelegate {
   FlutterMethodChannel *_methodChannel;
 }
 
@@ -15,7 +15,7 @@ NSString *const FLTWKEstimatedProgressKeyPath = @"estimatedProgress";
   if (self) {
     _methodChannel = channel;
     [webView addObserver:self
-              forKeyPath:FLTWKEstimatedProgressKeyPath
+              forKeyPath:ProWKEstimatedProgressKeyPath
                  options:NSKeyValueObservingOptionNew
                  context:nil];
   }
@@ -23,14 +23,14 @@ NSString *const FLTWKEstimatedProgressKeyPath = @"estimatedProgress";
 }
 
 - (void)stopObservingProgress:(WKWebView *)webView {
-  [webView removeObserver:self forKeyPath:FLTWKEstimatedProgressKeyPath];
+  [webView removeObserver:self forKeyPath:ProWKEstimatedProgressKeyPath];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context {
-  if ([keyPath isEqualToString:FLTWKEstimatedProgressKeyPath]) {
+  if ([keyPath isEqualToString:ProWKEstimatedProgressKeyPath]) {
     NSNumber *newValue =
         change[NSKeyValueChangeNewKey] ?: 0;          // newValue is anywhere between 0.0 and 1.0
     int newValueAsInt = [newValue floatValue] * 100;  // Anywhere between 0 and 100

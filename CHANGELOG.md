@@ -1,3 +1,6 @@
+## 1.0.3
+- fix: iOS run exception,conflict with webview_flutter: ^2.8.0（Issues #9 #11 ）
+
 ## 1.0.2
 - support select pdf|doc|xls files（Issues #6 ）
 
