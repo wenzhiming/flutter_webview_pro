@@ -70,7 +70,7 @@ import 'package:flutter_webview_pro/webview_flutter.dart';
 ```
 ## Gateway
 
- - [FAQ](faq.md)
+ - [FAQ](FAQ.md)
  - [Update log](CHANGELOG.md)
 
  
