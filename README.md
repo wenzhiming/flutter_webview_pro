@@ -1,5 +1,5 @@
 # Flutter WebView Pro
-## Migrate to [wenzhiming/flutter-plugins](https://github.com/wenzhiming/flutter-plugins/tree/dev/packages/webview_flutter/webview_flutter)
+## Migrate to [wenzhiming/flutter-plugins](https://github.com/wenzhiming/flutter-plugins/tree/dev/packages/webview_flutter/webview_flutter) since March 30, 2022
 
 [![pub package](https://img.shields.io/badge/pub-v3.0.1+2-orange)](https://pub.dartlang.org/packages/flutter_webview_pro)
 
